@@ -2,14 +2,33 @@
 #import "components/cover.typ": render-cover
 #import "components/sidebar.typ": render-sidebar
 #import "foundation/theme.typ": theme
+#import "core/overlays.typ": render-overlays
 #import "utils/draw.typ": place-circle
 
+/// Applies the SDU OS slide theme to the document.
+///
+/// The setup function renders a cover page, configures the slide canvas,
+/// installs the heading styles, and enables overlay rendering through
+/// `pause`, `meanwhile`, and `jump`.
+///
+/// Headings always start a new page. Level 3 and deeper headings are rendered
+/// as centered in-slide titles.
+///
+/// - author (str): Author name shown on the cover and sidebar.
+/// - term (str): Course term shown on the cover.
+/// - title (str): Presentation title shown on the cover.
+/// - subtitle (str): Subtitle shown on the cover and sidebar.
+/// - date (datetime): Date shown in the sidebar.
+/// - handout (bool): Whether to render only the final overlay state of each slide.
+/// - body (content): Presentation body.
+/// -> content
 #let setup(
     author: "arshtyi",
     term: "2026 Spring",
     title: "SDU OS Slide",
     subtitle: "Slide for SDU operating system",
     date: datetime.today(),
+    handout: false,
     body,
 ) = {
     let colors = theme.colors
@@ -35,7 +54,7 @@
         if heading-node.level > 2 {
             set align(center)
             text(size: 20pt, fill: theme.colors.primary, heading-node)
-        } else { [] }
+        }
     }
     show heading.where(level: 3): set block(below: 2em)
     set page(
@@ -90,21 +109,21 @@
             )
         },
     )
-    set text(size: 20pt, font: (theme.fonts.content.cjk, theme.fonts.content.latin))
-    // show terms: terms-list => {
-    //     let term-cells = ()
-    //     set par(justify: false)
-    //     for item in terms-list.children {
-    //         term-cells.push(block(text(fill: theme.colors.primary, item.term)))
-    //         term-cells.push(block(item.description))
-    //     }
-    //     grid(
-    //         columns: (auto, 1fr),
-    //         column-gutter: 2em,
-    //         row-gutter: 0.6em,
-    //         align: (left, left),
-    //         ..term-cells,
-    //     )
-    // }
-    body
+    set text(size: 20pt, font: (theme.fonts.content.cjk, theme.fonts.content.latin), weight: "medium")
+    set par(justify: true)
+    set underline(stroke: 0.05em, offset: 0.25em)
+    show raw: set text(font: ("IBM Plex Mono", "Source Han Sans SC", "Noto Sans CJK SC"))
+    show raw.where(block: false): box.with(
+        fill: luma(240),
+        inset: (x: 0.3em, y: 0em),
+        outset: (x: 0em, y: 0.3em),
+        radius: 0.2em,
+    )
+    show raw.where(block: true): block.with(
+        fill: luma(248),
+        stroke: 0.5pt + colors.neutral-soft,
+        inset: 0.7em,
+        radius: 4pt,
+    )
+    render-overlays(body, handout: handout)
 }

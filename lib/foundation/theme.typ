@@ -1,3 +1,9 @@
+/// Shared visual constants for the SDU OS slide theme.
+///
+/// The dictionary contains font families, colors, and page dimensions used by
+/// the cover, sidebar, frame, and body text.
+///
+/// -> dictionary
 #let theme = (
     fonts: (
         cover: "LXGW WenKai",
