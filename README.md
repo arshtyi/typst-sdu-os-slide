@@ -13,28 +13,26 @@ git clone https://github.com/arshtyi/typst-sdu-os-slide.git
 ### Build the template
 
 ```typ
-#import "slide.typ": setup, theme
+#import "slide.typ": setup, theme, pause, meanwhile
 #show: setup.with(
     title: "SDU OS Slide",
     subtitle: "Slide for SDU OS",
     author: "arshtyi",
     term: "2026 Spring",
     date: datetime.today(),
+    handout: false,
 )
 ```
 
-an example: [`template/template.typ`](template/template.typ)
+## Example
 
-<details>
-<summary>Preview</summary>
-
-![template.png](https://raw.githubusercontent.com/arshtyi/typst-sdu-os-slide/main/template/template.png)
-
-</details>
+- [放映版](https://raw.githubusercontent.com/arshtyi/typst-sdu-os-slide/main/template/typst-sdu-os-slide.pdf)
+- [阅读版](https://raw.githubusercontent.com/arshtyi/typst-sdu-os-slide/main/template/typst-sdu-os-slide-handout.pdf)
 
 ## Features
 
 - 还原了原幻灯片的整体风格和布局.
+- 支持类似 Touying 的 `#pause` 与 `#meanwhile` 覆盖层语义和 `handout: true` 生成只包含最终 overlay 状态的阅读版.
 - 主要使用了以下字体:
   - [LxgwWenkai](https://github.com/lxgw/LxgwWenkai)
   - [source-han-sans](https://github.com/adobe-fonts/source-han-sans)
@@ -43,13 +41,5 @@ an example: [`template/template.typ`](template/template.typ)
 ## Note
 
 - 原幻灯片可以在[arshtyi/SDU-Operating-System-PPTs](https://github.com/arshtyi/SDU-Operating-System-PPTs)等处获取.
-- 模板中有几处细节不好确定, 可能与原幻灯片不完全一致, 但整体风格和布局是相似的.
-- 模板中没有添加任何功能性组件, 仅还原了外观.
-
-## Bug?
-
-目前为了保持`sidebar`的正常高亮,一、二级`heading`默认`pagebreak`,这个问题可能应当被修复.
-
-## Incoming
-
-- `pause`
+- 模板中有几处小细节不好确定, 可能与原幻灯片不完全一致, 但几乎无影响.
+- `pause`/`meanwhile` 会在播放版中展开 overlay, 在 `handout: true` 时只保留最终状态.

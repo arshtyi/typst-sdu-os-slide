@@ -1,5 +1,5 @@
-#import "../slide.typ": setup, theme
-#import "@preview/octique:0.1.1": octique-inline
+#import "../slide.typ": jump, meanwhile, pause, setup, theme
+#import "utils.typ": *
 
 #show: setup.with(
     title: "SDU OS Slide",
@@ -7,90 +7,195 @@
     author: "arshtyi",
     term: "2026 Spring",
     date: datetime.today(),
+    handout: false,
 )
-// Some utils
-#let typst-color = rgb("#239DAD")
-#let Typst = text(fill: typst-color, weight: "bold", "Typst")
-#let Touying = text(fill: rgb("#425066"), weight: "bold", "Touying")
-#let Markdown = text(fill: rgb(purple), weight: "bold", "Markdown")
-#let TeX = {
-    set text(font: "New Computer Modern", weight: "regular")
-    box(width: 1.7em, {
-        [T]
-        place(top, dx: 0.56em, dy: 0.22em)[E]
-        place(top, dx: 1.1em)[X]
-    })
-}
-#let LaTeX = {
-    set text(font: "New Computer Modern", weight: "regular")
-    box(width: 2.55em, {
-        [L]
-        place(top, dx: 0.3em, text(size: 0.7em)[A])
-        place(top, dx: 0.7em)[#TeX]
-    })
-}
-// Functions
-#let linkto(url, icon: "link") = link(url, box(baseline: 30%, move(dy: -.15em, octique-inline(icon))))
-#let keydown(key) = box(stroke: 2pt, inset: .2em, radius: .2em, baseline: .2em, key)
-// Styles
-#set text(weight: "medium")
-#set par(justify: true)
-#set underline(stroke: .05em, offset: .25em)
-#show raw: set text(font: ("IBM Plex Mono", "Source Han Sans SC", "Noto Sans CJK SC"))
-#show raw.where(block: false): box.with(
-    fill: luma(240),
-    inset: (x: .3em, y: 0em),
-    outset: (x: 0em, y: .3em),
-    radius: .2em,
-)
-#show raw.where(block: true): set par(justify: false)
-= Intro
-== What is Typst
-#Typst #linkto("https://typst.app") is a new *markup-based* typesetting system for the sciences. It is designed to be an alternative both to advanced tools like #LaTeX and simpler tools like Word and Google Docs.
-== Why Use Typst
-#Typst = #LaTeX 的排版能力 + #Markdown 的简洁语法 + 强大且现代的脚本语言
-= How to Use
-== Installation
-Just use VSCode #linkto("https://code.visualstudio.com/") + Typst Extension #linkto("https://marketplace.visualstudio.com/items?itemName=myriad-dreamin.tinymist") to enjoy the best experience.
-== Writing
-=== Modes
-#set text(size: 20pt, font: (theme.fonts.content.cjk, theme.fonts.content.latin))
-#show terms: terms-list => {
-    let term-cells = ()
-    set par(justify: false)
-    for item in terms-list.children {
-        term-cells.push(block(text(fill: theme.colors.primary, item.term)))
-        term-cells.push(block(item.description))
-    }
-    grid(
-        columns: (auto, 1fr),
-        column-gutter: 2em,
-        row-gutter: 0.6em,
-        align: (left, left),
-        ..term-cells,
-    )
-}
-/ Markup mode: use markup syntax like `=`, `**`, `-`, ... to write content.
-/ Script mode: use `#` to enter script mode, where you can write code to generate content. You can also use `#{...}` to embed script in markup mode.
-/ Math mode: use `$...$` for inline math and `$ ... $` for display math.
 
-下面这套方法虽然能够实现上述列表样式,但原Slide中与之类似的内容又多又复杂多变,因此此行为弃用.一种更好的方式是需要时再手动调整一份.
-=== Notes
+= Overview
+
+== Template Goals
+
+#feature-table(
+    [Look],
+    [Cover, frame, sidebar, SDU logo, and course-flavored color tokens.],
+    [Structure],
+    [`= Section` and `== Slide` are slide boundaries and sidebar entries.],
+    [Animation],
+    [`#pause`, `#meanwhile`, and `#jump` provide incremental overlays.],
+    [Docs],
+    [Public functions are documented with tidy-friendly `///` comments.],
+)
+
+== Writing Model
+
+- Use markup for prose, lists, headings, and emphasis.
+- Use `#` to call functions, read theme values, and generate repeated content.
+- Use math mode for formulas, for example $H = - sum_i p_i log p_i$.
+
+#note-box[Heading rule][
+    Level 1, level 2, and level 3 headings start new slide pages. Level 3 headings are rendered as centered red titles.
+]
+
+= Usage
+
+== Minimal
+
+Start with the public entry point `slide.typ`.
+
 ```typ
-#set text(size: 20pt, font: (theme.fonts.content.cjk, theme.fonts.content.latin))
+#import "slide.typ": setup, theme, pause, meanwhile
+
+#show: setup.with(
+    title: "SDU OS Slide",
+    subtitle: "Slide for SDU OS",
+    author: "arshtyi",
+    term: "2026 Spring",
+    date: datetime.today(),
+    handout: false,
+)
+
+= Chapter
+== Slide Title
+
+Write slide content here.
+```
+
+== Theme Values
+
+The exported `theme` dictionary contains the shared design tokens.
+
+#feature-table(
+    [`theme.fonts.cover`],
+    [Cover-page title font.],
+    [`theme.fonts.content`],
+    [CJK and Latin fonts for normal slide text.],
+    [`theme.colors.primary`],
+    [Main SDU red used for frame, highlights, and active sidebar rows.],
+    [`theme.page.sidebar-width`],
+    [Width of the right outline sidebar.],
+)
+
+=== Level 3 Slide
+
+This page is created by a level 3 heading. It is not shown in the sidebar, but it is still a slide boundary and is rendered as a centered title.
+
+= Overlays
+
+== Pause
+
+This example is in presentation mode because `handout: false`. Change it to
+`handout: true` when you want a distribution PDF with only the final state of
+each slide.
+
+`#pause` advances to the next overlay. Content after it is hidden first and revealed later.
+
+Always visible.
+
+#pause
+
+Visible on overlay 2.
+
+#pause
+
+Visible on overlay 3.
+
+=== Handout Mode
+
+Use `handout: true` for a distribution PDF. In handout mode, every slide is rendered once with the final overlay state.
+
+```typ
+#show: setup.with(
+    handout: true,
+)
+```
+
+== Meanwhile
+
+`#meanwhile` resets subsequent content back to the first overlay. It is useful when two groups should build independently.
+
+Left story starts here.
+
+#pause
+
+Left story continues on overlay 2.
+
+#meanwhile
+
+Right story is visible from overlay 1.
+
+#pause
+
+Right story continues on overlay 2.
+
+== Jump
+
+`#jump` is the lower-level primitive behind `pause` and `meanwhile`.
+
+- `#pause` is the same as `#jump(1, relative: true)`.
+- `#meanwhile` is the same as `#jump(1)`.
+- Relative jumps can skip or revisit overlay steps when you need manual control.
+
+#jump(2, relative: true)
+
+This line appears after skipping one overlay step.
+
+= Components
+
+== Sidebar
+
+The sidebar is built from level 1 and level 2 headings.
+
+#feature-table(
+    [Level 1],
+    [Rendered as a section heading in the outline.],
+    [Level 2],
+    [Rendered as a slide heading and highlighted while active.],
+    [Links],
+    [Sidebar entries jump to the original heading locations.],
+)
+
+== Code and Keys
+
+Inline code uses a quiet gray background, and block code is framed for scanning.
+
+Press #keydown("Ctrl") + #keydown("S") to save, then compile with:
+
+```bash
+typst compile --root . template/template.typ template/template.pdf
+```
+
+== Terms Layout
+
 #show terms: terms-list => {
     let term-cells = ()
     set par(justify: false)
     for item in terms-list.children {
-        term-cells.push(block(text(fill: theme.colors.primary, item.term)))
+        term-cells.push(block(text(fill: primary, weight: "bold", item.term)))
         term-cells.push(block(item.description))
     }
     grid(
         columns: (auto, 1fr),
-        column-gutter: 2em,
-        row-gutter: 0.6em,
+        column-gutter: 1.6em,
+        row-gutter: 0.45em,
         align: (left, left),
         ..term-cells,
     )
 }
-```
+
+/ `setup`: Applies page layout, cover, sidebar, heading rules, and overlays.
+/ `pause`: Reveals following content one overlay later.
+/ `meanwhile`: Starts a parallel reveal sequence from overlay 1.
+/ `theme`: Provides fonts, colors, and dimensions for custom slide content.
+
+= Closing
+
+== Checklist
+
+- Import from `slide.typ`, not directly from `lib`.
+- Use `= / ==` for slide boundaries.
+- Use `===` for in-slide section titles.
+- Use `#pause` and `#meanwhile` for incremental content.
+- Keep custom styles local to the slide when possible.
+
+#note-box[Next step][
+    Open `docs/manual.pdf` for the generated manual and API reference. Use this file as a visual smoke test for template changes.
+]

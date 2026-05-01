@@ -1,6 +1,17 @@
 #import "../foundation/theme.typ": theme
 #import "../utils/draw.typ": place-circle
 
+/// Renders the opening cover page.
+///
+/// The cover uses the SDU and SDU CS logos, decorative circles, and the theme's
+/// cover font and color tokens. It also resets the page counter so the first
+/// content slide starts from page 1.
+///
+/// - title (str): Main title shown in the center of the cover.
+/// - subtitle (str): Subtitle shown below the title.
+/// - author (str): Author name shown in the lower badge.
+/// - term (str): Course term shown in the lower badge.
+/// -> content
 #let render-cover(
     title: "SDU OS Slide",
     subtitle: "Slide for SDU operating system",
