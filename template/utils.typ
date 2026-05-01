@@ -1,4 +1,5 @@
 #import "../slide.typ": jump, meanwhile, pause, setup, theme
+#import "@preview/octique:0.1.1": octique-inline
 
 #let colors = theme.colors
 #let fonts = theme.fonts
@@ -30,14 +31,19 @@
     },
 )
 
-#let feature-table(..rows) = table(
-    columns: (1fr, 2fr),
-    stroke: none,
-    inset: (x: 0.55em, y: 0.38em),
-    fill: (_, row) => if row == 0 { colors.primary-soft } else { colors.primary-muted },
-    row-gutter: range(0, rows.pos().len()).map(index => if index == 0 { 0.2em } else { 0.1em }),
-    column-gutter: 0.1em,
-    align: (left, left),
-    table.header(text(fill: white, weight: "bold")[Feature], text(fill: white, weight: "bold")[Usage]),
-    ..rows.pos(),
-)
+#let feature-table(..rows) = {
+    let cells = rows.pos()
+    let data-row-count = calc.ceil(cells.len() / 2)
+
+    table(
+        columns: (1fr, 2fr),
+        stroke: none,
+        inset: (x: 0.55em, y: 0.38em),
+        fill: (_, row) => if row == 0 { colors.primary-soft } else { colors.primary-muted },
+        row-gutter: range(0, data-row-count).map(index => if index == 0 { 0.2em } else { 0.1em }),
+        column-gutter: 0.1em,
+        align: (left, left),
+        table.header(text(fill: white, weight: "bold")[Feature], text(fill: white, weight: "bold")[Usage]),
+        ..cells,
+    )
+}

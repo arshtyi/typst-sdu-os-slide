@@ -1,5 +1,4 @@
 #import "../slide.typ": jump, meanwhile, pause, setup, theme
-#import "@preview/octique:0.1.1": octique-inline
 #import "utils.typ": *
 
 #show: setup.with(
