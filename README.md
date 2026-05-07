@@ -43,3 +43,8 @@ git clone https://github.com/arshtyi/typst-sdu-os-slide.git
 - 原幻灯片可以在[arshtyi/SDU-Operating-System-PPTs](https://github.com/arshtyi/SDU-Operating-System-PPTs)等处获取.
 - 模板中有几处小细节不好确定, 可能与原幻灯片不完全一致, 但几乎无影响.
 - `pause`/`meanwhile` 会在播放版中展开 overlay, 在 `handout: true` 时只保留最终状态.
+
+## Reference
+
+- [touying](https://github.com/touying-typ/touying)
+- [typst-talk](https://github.com/OrangeX4/typst-talk)
