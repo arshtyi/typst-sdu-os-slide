@@ -14,7 +14,7 @@
 /// -> content
 #let render-cover(
     title: "SDU OS Slide",
-    subtitle: "Slide for SDU operating system",
+    subtitle: "Slide for SDU OS",
     author: "arshtyi",
     term: "2026 Spring",
 ) = {
@@ -29,12 +29,12 @@
         place(
             dx: 0.77cm,
             dy: 1.19cm,
-            image("../../assets/sdu.png"),
+            image("../../assets/sdu.png", width: 10.82cm, height: 2.86cm),
         )
         place(
             dx: 22.18cm,
             dy: 0cm,
-            image("../../assets/sducs.png"),
+            image("../../assets/sducs.png", width: 5.33cm, height: 4.85cm),
         )
         let cover-circle = place-circle.with(stroke: none)
         cover-circle(
@@ -58,7 +58,7 @@
         cover-circle(
             1.59cm + 3.56cm / 2,
             17.27cm + 3.56cm / 2,
-            1.005cm,
+            2.4cm / 2,
             fill: white,
         )
     })
@@ -68,10 +68,10 @@
         block(
             width: 24.32cm,
             height: 4.36cm,
-            inset: 20pt,
+            inset: 25pt,
             {
                 set align(center)
-                set par(leading: 3em)
+                set par(leading: 2.6em)
                 text(size: 48pt, title)
                 linebreak()
                 text(size: 32pt, subtitle)
@@ -89,7 +89,7 @@
                 text(
                     size: 18pt,
                     fill: colors.primary,
-                    "千载文脉凝风骨,根植山大盛芳华",
+                    "千载文脉凝风骨，根植山大盛芳华",
                 ),
             ),
         ),

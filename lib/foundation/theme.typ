@@ -24,8 +24,8 @@
     page: (
         width: 33.87cm,
         height: 19.05cm,
-        frame-width: 27cm,
-        frame-height: 18.8cm,
+        frame-width: 27.06cm,
+        frame-height: 18.74cm,
         sidebar-width: 6.75cm,
         sidebar-height: 17.2cm,
     ),

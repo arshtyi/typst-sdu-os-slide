@@ -88,7 +88,7 @@
         )
         if heading-node.level == 2 {
             let next-heading = outline-headings.at(index + 1, default: none)
-            if next-heading == none or next-heading.level == 1 {
+            if next-heading != none and next-heading.level == 1 {
                 cells.push(table.cell([]))
             }
         }
@@ -124,7 +124,7 @@
         } else {
             colors.primary-muted
         },
-        row-gutter: range(0, row-count + 1).map(index => if index == 0 { 0.2em } else { 0.1em }),
+        row-gutter: range(0, row-count + 1).map(index => if index == 0 { 0.12em } else { 0.05em }),
         stroke: none,
         align: center + horizon,
         table.cell(text(size: 20pt, weight: "bold", title)),

@@ -26,7 +26,7 @@
     author: "arshtyi",
     term: "2026 Spring",
     title: "SDU OS Slide",
-    subtitle: "Slide for SDU operating system",
+    subtitle: "Slide for SDU OS",
     date: datetime.today(),
     handout: false,
     body,
@@ -68,32 +68,28 @@
             place(
                 dx: 27.44cm,
                 dy: 0.1cm,
-                block(
-                    width: 6.02cm,
-                    height: 1.59cm,
-                    image("../assets/sdu.png"),
-                ),
+                image("../assets/sdu.png", width: 6.02cm, height: 1.59cm),
             )
             place(
                 dx: 27.12cm,
                 dy: 1.88cm,
                 block(
-                    width: page-config.sidebar-width,
-                    height: page-config.sidebar-height,
+                    width: page-config.sidebar-width - 0.35pt,
+                    height: page-config.sidebar-height - 0.6pt,
                     render-sidebar(subtitle, author, date),
                 ),
             )
             place-circle(
-                32.3cm + 3.56cm / 2,
+                32.2cm + 3.56cm / 2,
                 17.7cm + 3.56cm / 2,
                 3.56cm / 2,
                 fill: colors.primary,
                 stroke: none,
             )
             place-circle(
-                32.3cm + 3.56cm / 2,
+                32.2cm + 3.56cm / 2,
                 17.7cm + 3.56cm / 2,
-                1.005cm,
+                1cm,
                 fill: rgb("e6c2c4"),
                 stroke: none,
             )
@@ -103,8 +99,8 @@
                 rect(
                     width: page-config.frame-width,
                     height: page-config.frame-height,
-                    radius: 15pt,
-                    stroke: 3pt + colors.primary,
+                    radius: 10pt,
+                    stroke: 2.5pt + colors.primary,
                 ),
             )
         },

@@ -2,6 +2,10 @@
 
 使用Typst还原山东大学计算机科学与技术学院操作系统课程的幻灯片模板.
 
+## Incoming
+
+目前唯一的样式缺失应该是`sidebar`与右下角圆环的遮挡关系,但是暂时没有好的实现方案.除此之外的样式都与原幻灯片几乎一模一样(一些方面甚至加强).
+
 ## Quick Start
 
 ### Clone the repository
@@ -41,7 +45,6 @@ git clone https://github.com/arshtyi/typst-sdu-os-slide.git
 ## Note
 
 - 原幻灯片可以在[arshtyi/SDU-Operating-System-PPTs](https://github.com/arshtyi/SDU-Operating-System-PPTs)等处获取.
-- 模板中有几处小细节不好确定, 可能与原幻灯片不完全一致, 但几乎无影响.
 - `pause`/`meanwhile` 会在播放版中展开 overlay, 在 `handout: true` 时只保留最终状态.
 
 ## Reference
