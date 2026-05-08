@@ -7,42 +7,45 @@
     author: "arshtyi",
     term: "2026 Spring",
     date: datetime.today(),
-    handout: false,
+    // sidebar-ring-style: 2,
+    // handout: true,
 )
 
 = Overview
 
-== Template Goals
+== Goals
 
 #feature-table(
-    [Look],
-    [Cover, frame, sidebar, SDU logo, and course-flavored color tokens.],
-    [Structure],
-    [`= Section` and `== Slide` are slide boundaries and sidebar entries.],
-    [Animation],
-    [`#pause`, `#meanwhile`, and `#jump` provide incremental overlays.],
-    [Docs],
-    [Public functions are documented with tidy-friendly `///` comments.],
+    [Frame],
+    [Cover, SDU logo, page frame, right sidebar, and decorative ring.],
+    [Writing],
+    [Use ordinary Typst headings, lists, tables, math, code, and images.],
+    [Navigation],
+    [Level 1 and level 2 headings form the clickable sidebar outline.],
+    [Overlays],
+    [`#pause`, `#meanwhile`, and `#jump` provide incremental reveals.],
 )
 
-== Writing Model
-
-- Use markup for prose, lists, headings, and emphasis.
-- Use `#` to call functions, read theme values, and generate repeated content.
-- Use math mode for formulas, for example $H = - sum_i p_i log p_i$.
-
-#note-box[Heading rule][
-    Level 1, level 2, and level 3 headings start new slide pages. Level 3 headings are rendered as centered red titles.
+#note-box[Outline rule][
+    Keep level 1 headings for chapters and level 2 headings for real slides. Level 3 headings start slides too, but they do not enter the sidebar.
 ]
 
-= Usage
+== Heading Model
 
-== Minimal
+- `= Chapter` creates a major sidebar group.
+- `== Slide` creates a sidebar item and is highlighted while active.
+- `=== Focus` starts a slide without adding a sidebar item.
 
-Start with the public entry point `slide.typ`.
+=== Level 3 Focus Slide
+
+This slide is created by a level 3 heading. It is useful for a definition, interlude, or emphasis page that should not make the sidebar longer.
+
+= Template
+
+== Minimal Deck
 
 ```typ
-#import "slide.typ": setup, theme, pause, meanwhile
+#import "slide.typ": setup, pause, meanwhile, jump, theme
 
 #show: setup.with(
     title: "SDU OS Slide",
@@ -50,6 +53,7 @@ Start with the public entry point `slide.typ`.
     author: "arshtyi",
     term: "2026 Spring",
     date: datetime.today(),
+    sidebar-ring-style: 2,
     handout: false,
 )
 
@@ -59,34 +63,28 @@ Start with the public entry point `slide.typ`.
 Write slide content here.
 ```
 
-== Theme Values
-
-The exported `theme` dictionary contains the shared design tokens.
+== Theme & Sidebar
 
 #feature-table(
-    [`theme.fonts.cover`],
-    [Cover-page title font.],
-    [`theme.fonts.content`],
-    [CJK and Latin fonts for normal slide text.],
     [`theme.colors.primary`],
     [Main SDU red used for frame, highlights, and active sidebar rows.],
+    [`theme.colors.primary-muted`],
+    [Quiet fill used by the sidebar and example tables.],
     [`theme.page.sidebar-width`],
-    [Width of the right outline sidebar.],
+    [Width reserved for the right sidebar.],
+    [`sidebar-ring-style: 2`],
+    [Final ring layering: active row above the ring, normal fills below it.],
 )
 
-=== Level 3 Slide
-
-This page is created by a level 3 heading. It is not shown in the sidebar, but it is still a slide boundary and is rendered as a centered title.
+#note-box[Helpers][
+    `template/utils.typ` contains small example helpers such as `#note-box`, `#feature-table`, `#keydown`, and `#linkto`. They are not required by the core theme.
+]
 
 = Overlays
 
-== Pause
+== Reveal Flow
 
-This example is in presentation mode because `handout: false`. Change it to
-`handout: true` when you want a distribution PDF with only the final state of
-each slide.
-
-`#pause` advances to the next overlay. Content after it is hidden first and revealed later.
+`#pause` advances to the next overlay.
 
 Always visible.
 
@@ -98,104 +96,92 @@ Visible on overlay 2.
 
 Visible on overlay 3.
 
-=== Handout Mode
+== Parallel Flow
 
-Use `handout: true` for a distribution PDF. In handout mode, every slide is rendered once with the final overlay state.
+`#meanwhile` restarts following content at overlay 1, which is useful for two independent stories.
 
-```typ
-#show: setup.with(
-    handout: true,
+#grid(
+    columns: (1fr, 1fr),
+    column-gutter: 1.1cm,
+    align: (left, left),
+    [
+        #text(fill: primary, weight: "bold")[Kernel path]
+
+        Interrupt handler runs.
+
+        #pause
+
+        Scheduler chooses the next task.
+    ],
+    [
+        #meanwhile
+
+        #text(fill: primary, weight: "bold")[Device path]
+
+        Device reports completion.
+
+        #pause
+
+        Blocked process returns to ready queue.
+    ],
 )
-```
 
-== Meanwhile
+= Examples
 
-`#meanwhile` resets subsequent content back to the first overlay. It is useful when two groups should build independently.
-
-Left story starts here.
-
-#pause
-
-Left story continues on overlay 2.
-
-#meanwhile
-
-Right story is visible from overlay 1.
-
-#pause
-
-Right story continues on overlay 2.
-
-== Jump
-
-`#jump` is the lower-level primitive behind `pause` and `meanwhile`.
-
-- `#pause` is the same as `#jump(1, relative: true)`.
-- `#meanwhile` is the same as `#jump(1)`.
-- Relative jumps can skip or revisit overlay steps when you need manual control.
-
-#jump(2, relative: true)
-
-This line appears after skipping one overlay step.
-
-= Components
-
-== Sidebar
-
-The sidebar is built from level 1 and level 2 headings.
+== OS Concept Slide
 
 #feature-table(
-    [Level 1],
-    [Rendered as a section heading in the outline.],
-    [Level 2],
-    [Rendered as a slide heading and highlighted while active.],
-    [Links],
-    [Sidebar entries jump to the original heading locations.],
+    [Process],
+    [An executing program with its own address space and resource ownership.],
+    [Thread],
+    [A schedulable control flow that shares most process resources.],
+    [Context switch],
+    [Saving one execution context and restoring another.],
+    [Interrupt],
+    [An asynchronous event that transfers control to the kernel.],
 )
 
-== Code and Keys
+Average turnaround time:
+$ T_"avg" = (1 / n) sum_(i=1)^n (C_i - A_i) $
 
-Inline code uses a quiet gray background, and block code is framed for scanning.
+== Scheduling Table
 
-Press #keydown("Ctrl") + #keydown("S") to save, then compile with:
+#table(
+    columns: (1.2fr, 1fr, 1.2fr, 1.7fr),
+    stroke: none,
+    inset: (x: 0.5em, y: 0.35em),
+    fill: (_, row) => if row == 0 { colors.primary-soft } else { colors.primary-muted },
+    row-gutter: 0.1em,
+    column-gutter: 0.1em,
+    align: (left, center, center, left),
+    table.header(
+        text(fill: white, weight: "bold")[Policy],
+        text(fill: white, weight: "bold")[Preemptive],
+        text(fill: white, weight: "bold")[Good at],
+        text(fill: white, weight: "bold")[Watch out for],
+    ),
+    [FCFS], [No], [Throughput], [Convoy effect],
+    [SJF], [No], [Average waiting time], [Needs burst prediction],
+    [SRTF], [Yes], [Short jobs], [Starvation risk],
+    [RR], [Yes], [Responsiveness], [Quantum tuning],
+)
 
-```bash
-typst compile --root . template/template.typ template/template.pdf
+== Code and Assets
+
+```typ
+#import "@preview/fletcher:0.5.8" as fletcher: diagram, node, edge
+#diagram(cell-size: 15mm, $
+	G edge(f, ->) edge("d", pi, ->>) & im(f) \
+	G slash ker(f) edge("ur", tilde(f), "hook-->")
+$)
 ```
 
-== Terms Layout
+Press #keydown("Ctrl") + #keydown("S") to save, then compile:
 
-#show terms: terms-list => {
-    let term-cells = ()
-    set par(justify: false)
-    for item in terms-list.children {
-        term-cells.push(block(text(fill: primary, weight: "bold", item.term)))
-        term-cells.push(block(item.description))
-    }
-    grid(
-        columns: (auto, 1fr),
-        column-gutter: 1.6em,
-        row-gutter: 0.45em,
-        align: (left, left),
-        ..term-cells,
-    )
-}
+```bash
+typst compile --root . template/template.typ template/typst-sdu-os-slide.pdf
+```
 
-/ `setup`: Applies page layout, cover, sidebar, heading rules, and overlays.
-/ `pause`: Reveals following content one overlay later.
-/ `meanwhile`: Starts a parallel reveal sequence from overlay 1.
-/ `theme`: Provides fonts, colors, and dimensions for custom slide content.
+Useful links: Typst #linkto("https://typst.app/docs/"), CeTZ #linkto("https://github.com/johannes-wolf/cetz"), Touying #linkto("https://github.com/touying-typ/touying").
 
-= Closing
-
-== Checklist
-
-- Import from `slide.typ`, not directly from `lib`.
-- Use `= / ==` for slide boundaries.
-- Use `===` for in-slide section titles.
-- Use `#pause` and `#meanwhile` for incremental content.
-- Keep custom styles local to the slide when possible.
-
-#note-box[Next step][
-    Open `docs/manual.pdf` for the generated manual and API reference. Use this file as a visual smoke test for template changes.
-]
+#align(center, image("../assets/sducs.png", width: 6.8cm))

@@ -1,307 +1,299 @@
 #import "@preview/tidy:0.4.3"
 #import "../slide.typ" as sdu
-
-#let primary = rgb("#9c0b15")
-#let primary-soft = rgb("#ce858a")
-#let ink = rgb("#202124")
-#let muted = rgb("#666a70")
-#let paper = rgb("#fbfaf8")
-#let panel = rgb("#ffffff")
-#let rule = rgb("#e5d8d8")
-
-#let api-colors = (
-    default: rgb("#f3eeee"),
-    content: rgb("#f4d7da"),
-    str: rgb("#e7f0ff"),
-    string: rgb("#e7f0ff"),
-    int: rgb("#fff0cf"),
-    bool: rgb("#e2f4df"),
-    datetime: rgb("#e9e1ff"),
-    dictionary: rgb("#ececec"),
-    array: rgb("#ececec"),
-    arguments: rgb("#ececec"),
-    function: rgb("#f7e0f4"),
-    "none": rgb("#f2d2ca"),
-    "auto": rgb("#f2d2ca"),
-    "signature-func-name": primary,
+#import "manual-style.typ" as manual-style: (
+    code, example-pair, info, muted, note, option-table, panel, pill, red, red-soft, rule, tip,
 )
 
-#set document(
-    title: "SDU OS Slide Manual",
-    author: "arshtyi",
-)
-#set page(
-    paper: "a4",
-    margin: (x: 2.1cm, top: 2.2cm, bottom: 2.4cm),
-    fill: paper,
-    header: context {
-        if counter(page).get().first() > 1 {
-            set text(size: 8.5pt, fill: muted)
-            grid(
-                columns: (1fr, auto),
-                align: (left, right),
-                [SDU OS Slide], counter(page).display(),
-            )
-            v(3pt)
-            line(length: 100%, stroke: 0.4pt + rule)
-        }
-    },
-)
-#set text(
-    size: 10.5pt,
-    fill: ink,
-    font: ("Source Han Sans SC", "Calibri"),
-)
-#set par(justify: true, leading: 0.72em)
-#set list(indent: 1.2em, body-indent: 0.45em)
-#show link: set text(fill: primary)
-#show raw: set text(font: ("IBM Plex Mono", "Source Han Sans SC"))
-#show raw.where(block: false): box.with(
-    fill: rgb("#f4eeee"),
-    inset: (x: 0.28em, y: 0.02em),
-    outset: (y: 0.18em),
-    radius: 2pt,
-)
-#show raw.where(block: true): it => block(
-    fill: panel,
-    stroke: 0.6pt + rule,
-    inset: 10pt,
-    radius: 4pt,
-    width: 100%,
-    it,
-)
-#show heading.where(level: 1): it => {
-    pagebreak(weak: true)
-    block(below: 1.1em, {
-        text(size: 23pt, weight: "bold", fill: primary, it.body)
-        v(5pt)
-        line(length: 100%, stroke: 1.2pt + primary)
-    })
+#show: manual-style.setup
+
+#let param(module-name, fn, arg, full: false) = {
+    let label-prefix = module-name + "-"
+    let func-name = fn.text
+    let arg-name = arg.text
+    let arg-link = link(label(label-prefix + func-name + "." + arg-name), raw(arg-name, lang: none))
+    if full {
+        [the #arg-link option of #link(label(label-prefix + func-name + "()"), raw(func-name + "()", lang: none))]
+    } else {
+        arg-link
+    }
 }
-#show heading.where(level: 2): it => block(
-    above: 1.0em,
-    below: 0.55em,
-    text(size: 16pt, weight: "bold", fill: primary, it.body),
-)
-#show heading.where(level: 3): it => block(
-    above: 0.8em,
-    below: 0.35em,
-    text(size: 12.5pt, weight: "bold", fill: ink, it.body),
-)
-#show heading.where(level: 4): it => block(
-    above: 0.5em,
-    below: 0.25em,
-    text(size: 10.5pt, weight: "bold", fill: primary, it.body),
-)
 
-#let callout(title, body) = block(
-    width: 100%,
-    fill: panel,
-    stroke: (left: 3pt + primary, rest: 0.6pt + rule),
-    inset: (x: 12pt, y: 9pt),
-    radius: 4pt,
-    [
-        #text(weight: "bold", fill: primary, title)
-        #parbreak()
-        #body
-    ],
-)
-
-#let module-reference(title, path, description) = {
+#let api-module(title, path, description, only: none) = {
     heading(level: 2, title)
     text(fill: muted, description)
-    v(0.6em)
+    v(0.5em)
     let docs = tidy.parse-module(
         read(path),
         name: title,
         label-prefix: title + "-",
-        scope: (sdu: sdu),
+        scope: (
+            sdu: sdu,
+            theme: sdu.theme,
+            setup: sdu.setup,
+            pause: sdu.pause,
+            meanwhile: sdu.meanwhile,
+            jump: sdu.jump,
+            param: param,
+        ),
     )
+    if only != none {
+        docs.functions = only.map(name => docs.functions.find(fn => fn.name == name)).filter(x => x != none)
+        docs.variables = only.map(name => docs.variables.find(var => var.name == name)).filter(x => x != none)
+    }
     tidy.show-module(
         docs,
-        style: tidy.styles.default,
+        style: manual-style,
         first-heading-level: 2,
         show-module-name: false,
         show-outline: true,
         sort-functions: none,
-        colors: api-colors,
+        colors: manual-style.colors,
         omit-private-definitions: true,
         omit-private-parameters: true,
         local-names: (
-            parameters: [参数],
-            default: [默认值],
-            variables: [变量],
+            parameters: [Parameters],
+            default: [Default],
+            variables: [Variables],
         ),
     )
 }
 
-#align(center + horizon, block(height: 23cm, {
-    image("../assets/sdu.png", width: 6.4cm)
-    v(1.6cm)
-    text(size: 30pt, weight: "bold", fill: primary)[SDU OS Slide]
-    v(0.35cm)
-    text(size: 15pt, fill: muted)[Typst 幻灯片模板使用手册]
-    v(1.2cm)
-    line(length: 8cm, stroke: 1pt + primary-soft)
-    v(1.2cm)
-    text(size: 10pt, fill: muted)[API reference generated by tidy]
-    v(0.2cm)
-    text(size: 10pt, fill: muted)[#datetime.today().display("[year]-[month]-[day]")]
-}))
+#v(0.35fr)
+#grid(
+    columns: (1.2fr, 0.8fr),
+    gutter: 18pt,
+    align: (horizon, horizon),
+    [
+        #image("../assets/sdu.png", width: 6.3cm)
+        #v(20pt)
+        #text(size: 31pt, weight: "bold", fill: red)[SDU OS Slide]
+        #v(7pt)
+        #text(size: 13.5pt, fill: muted)[Manual for the Shandong University OS slide template]
+        #v(12pt)
+        #line(length: 72%, stroke: 1.1pt + red)
+        #v(12pt)
+        #text(size: 9.5pt, fill: muted)[Guide, examples, and API reference]
+    ],
+    [
+        #block(
+            fill: panel,
+            stroke: 0.55pt + rule,
+            inset: 14pt,
+            radius: 4pt,
+            [
+                #text(size: 8.5pt, fill: muted)[PUBLIC SURFACE]
+                #parbreak()
+                #pill[`setup()`] #h(3pt) #pill[`pause`] #h(3pt) #pill[`meanwhile`] #h(3pt) #pill[`jump()`]
+                #v(10pt)
+                #text(size: 8.5pt, fill: muted)[DESIGN TOKENS]
+                #parbreak()
+                #pill(fill: rgb("#f4d7da"))[`theme.colors.primary`]
+                #h(3pt)
+                #pill(fill: rgb("#e7f0ff"))[`theme.page.sidebar-width`]
+            ],
+        )
+    ],
+)
+#v(1fr)
 
-#pagebreak()
-
-#outline(title: [目录], depth: 3)
-
-= 项目概览
-
-SDU OS Slide 是一个面向山东大学操作系统课程幻灯片风格的 Typst 模板.它的核心目标是保持原幻灯片的版式特征,同时提供更适合源码维护的模块结构和增量展示能力.
-
-#callout[页边界规则][
-    一级、二级和三级标题都是幻灯片页边界：`= Section`、`== Slide` 与 `=== Topic` 都会触发换页.三级标题不会进入右侧 sidebar,但会在新页中渲染为居中的红色标题.
+#columns(2)[
+    #outline(
+        title: align(center, box(width: 100%)[Guide]),
+        indent: 1em,
+        target: selector(heading).before(<reference>, inclusive: false),
+    )
+    #colbreak()
+    #outline(
+        title: align(center, box(width: 100%)[Reference]),
+        indent: 1em,
+        target: selector(heading.where(level: 1)).or(heading.where(level: 2)).after(<reference>, inclusive: true),
+    )
 ]
 
-== 模块地图
+#pagebreak()
+= Guide
 
-#table(
-    columns: (1.25fr, 2fr),
-    stroke: 0.45pt + rule,
-    fill: (_, row) => if row == 0 { primary } else { panel },
-    inset: 7pt,
-    align: (left, left),
-    table.header(text(fill: white, weight: "bold")[模块], text(fill: white, weight: "bold")[职责]),
-    [`slide.typ`], [对外入口,导出 `setup`、`theme`、`pause`、`meanwhile`、`jump`.],
-    [`lib/theme.typ`], [页面尺寸、封面、正文页框、1/2/3 级标题页边界与 overlay 渲染入口.],
-    [`lib/core/overlays.typ`], [`pause`/`meanwhile`/`jump` 的覆盖层标记、handout 与播放版渲染器.],
-    [`lib/foundation/theme.typ`], [字体、颜色、页面尺寸等设计 token.],
-    [`lib/components/cover.typ`], [封面页绘制.],
-    [`lib/components/sidebar.typ`], [右侧目录、当前小节高亮和页内链接.],
-    [`lib/utils/draw.typ`], [绘图辅助函数.],
-)
+SDU OS Slide recreates the visual language of the Shandong University operating-system course slides while keeping the authoring model deliberately small. A deck imports one setup function, writes ordinary Typst headings, and uses three overlay markers when a slide should build step by step.
 
-= 快速开始
+#info[What the template owns][
+    `setup()` installs the cover, page frame, right sidebar, logo, heading behavior, raw-code styling, and overlay renderer. Your deck remains normal Typst content inside that frame.
+]
 
-```typ
-#import "slide.typ": setup, theme, pause, meanwhile
+== Quick Start
+
+#code(
+    `#import "slide.typ": setup, pause, meanwhile, jump, theme
 
 #show: setup.with(
-    title: "SDU OS Slide",
-    subtitle: "Slide for SDU OS",
-    author: "arshtyi",
-    term: "2026 Spring",
-    date: datetime.today(),
-    handout: false,
+  title: "SDU OS Slide",
+  subtitle: "Slide for SDU OS",
+  author: "arshtyi",
+  term: "2026 Spring",
+  date: datetime.today(),
+  handout: false,
+  sidebar-ring-style: 1,
 )
 
 = Chapter
-== First Slide
-=== Optional Topic Slide
+== Slide Title
 
-第一段内容
+Always visible.
+
 #pause
-第二段内容
-#meanwhile
-这一段从第一层 overlay 就可见
-```
 
-`pause` 会让后续内容延迟到下一层 overlay 出现；`meanwhile` 会把后续内容重置回第一层 overlay,因此适合并行展示另一组内容.
-
-将 `handout` 设为 `true` 可以生成阅读版 PDF：每张幻灯片只输出最终 overlay 状态,不会把 `pause` 的中间步骤展开成多页.
-
-= 写作约定
-
-== 标题层级
-
-- `= 一级标题`：章节标题,进入侧栏目录并触发新页.
-- `== 二级标题`：普通幻灯片标题,进入侧栏目录并触发新页.
-- `=== 三级标题`：主题页标题,不进入侧栏目录,但会触发新页并居中显示.
-- 更深层级标题：也会继承模板的换页规则；通常建议少用,避免目录和页边界过碎.
-
-== 覆盖层
-
-覆盖层按当前幻灯片的顶层内容顺序工作.隐藏内容使用 `hide` 保留占位,因此页面布局在不同 overlay 之间会更稳定.
-
-```typ
-Always visible
-#pause
-Visible on overlay 2
-#pause
-Visible on overlay 3
-#meanwhile
-Also visible on overlay 1
-```
-
-== 播放版与阅读版
-
-```typ
-#show: setup.with(
-    title: "Lecture",
-    handout: false, // presentation: keep every overlay
+Visible on the next overlay.`,
 )
-```
 
-```typ
-#show: setup.with(
-    title: "Lecture",
-    handout: true, // handout: final state only
+#tip[Import path][Use a relative import while working from this repository.]
+
+== Slide Model
+
+The template uses Typst headings as slide boundaries:
+
+- `= Section` starts a new slide and appears as a major sidebar entry.
+- `== Slide` starts a new slide, appears in the sidebar, and is highlighted while active.
+- `=== Topic` starts a new slide but is rendered as a centered in-slide title instead of a sidebar entry.
+- Deeper headings inherit the slide-break rule, but they are best reserved for rare focus pages.
+
+The right sidebar is built from outlined level 1 and level 2 headings. Each row is linked to the original heading location, so exported PDFs keep navigable section entries.
+
+== Setup Options
+
+#option-table(
+    [`title`],
+    [`str` / `"SDU OS Slide"`],
+    [Main cover title.],
+    [`subtitle`],
+    [`str` / `"Slide for SDU OS"`],
+    [Cover subtitle and sidebar title.],
+    [`author`],
+    [`str` / `"arshtyi"`],
+    [Cover badge and sidebar footer.],
+    [`term`],
+    [`str` / `"2026 Spring"`],
+    [Cover badge.],
+    [`date`],
+    [`datetime` / `datetime.today()`],
+    [Sidebar footer date, shown as `YYYY.MM`.],
+    [`handout`],
+    [`bool` / `false`],
+    [When true, each slide keeps only its final overlay state.],
+    [`sidebar-ring-style`],
+    [`int` / `1`],
+    [Controls the layering between the right sidebar and the lower-right decorative ring.],
 )
-```
 
-这与 Touying 的播放/讲义分工一致：播放版保留 reveal 的节奏,阅读版保留每页最终信息密度.
+#note[Sidebar ring styles][
+    `sidebar-ring-style: 1` keeps the decorative ring above the sidebar table. `sidebar-ring-style: 2` recreates the original slide layering more closely: normal row fills sit below the ring, the active row sits above it, and gutters mask the ring.
+]
 
-= API Reference
+== Theme Tokens
 
-依赖于 `tidy` 生成的 API 文档.
-
-== slide
-
-`slide.typ` 是使用者唯一需要直接导入的入口文件.它重新导出以下符号：
+Theme constants are exported as `theme` so user documents can read canonical values without copying magic numbers.
 
 #table(
-    columns: (1fr, 2fr),
-    stroke: 0.45pt + rule,
-    fill: (_, row) => if row == 0 { primary } else { panel },
-    inset: 7pt,
-    table.header(text(fill: white, weight: "bold")[导出], text(fill: white, weight: "bold")[说明]),
-    [`setup`], [模板主入口,通常通过 `#show: setup.with(..)` 使用.],
-    [`theme`], [设计 token 字典,可在用户文档中读取字体、颜色和页面尺寸.],
-    [`pause`], [进入下一层 overlay.],
-    [`meanwhile`], [把后续内容重置为从第一层 overlay 可见.],
-    [`jump`], [覆盖层底层跳转标记,供高级控制使用.],
+    columns: (1.5fr, 2.4fr),
+    fill: (_, row) => if row == 0 { red } else { panel },
+    table.header(text(fill: white, weight: "bold")[Token], text(fill: white, weight: "bold")[Use]),
+    [`theme.colors.primary`], [SDU red for frame, cover badges, active sidebar rows, and headings.],
+    [`theme.colors.primary-soft`], [Muted red for sidebar title rows and softer table fills.],
+    [`theme.colors.primary-muted`], [Quiet sidebar row fill.],
+    [`theme.page.sidebar-width`], [Reserved width for the right sidebar.],
+    [`theme.fonts.content`], [Default body font pair used inside slides.],
 )
 
-#module-reference(
+== Overlays
+
+`pause`, `meanwhile`, and `jump` are metadata markers processed by the overlay renderer. They do not draw anything by themselves.
+
+#table(
+    columns: (auto, 1fr),
+    fill: (_, row) => if row == 0 { red } else { panel },
+    table.header(text(fill: white, weight: "bold")[Marker], text(fill: white, weight: "bold")[Meaning]),
+    [`#pause`], [Advance by one overlay step. Later content is hidden until the next step.],
+    [`#meanwhile`], [Reset following content back to overlay step 1. Useful for two parallel reveal sequences.],
+    [`#jump(n)`],
+    [Low-level overlay control. With `relative: true`, moves relative to the current step; otherwise jumps to an absolute step.],
+)
+
+#example-pair(
+    `Always visible.
+
+#pause
+
+Visible on overlay 2.
+
+#meanwhile
+
+Also visible from overlay 1.`,
+    [
+        #text(weight: "bold", fill: red)[Reveal timeline]
+        #v(4pt)
+        #table(
+            columns: (auto, 1fr),
+            stroke: none,
+            fill: (_, row) => if row == 0 { red-soft } else { white },
+            table.header(text(fill: white)[Step], text(fill: white)[Visible content]),
+            [1], [Always visible; meanwhile branch begins.],
+            [2], [Everything from step 1 plus content after `pause`.],
+        )
+    ],
+)
+
+#tip[Handout build][
+    Set `handout: true` to output only the final overlay state of each slide. This is useful for reading PDFs or course handouts.
+]
+
+== Build Commands
+
+The template is plain Typst. These are useful smoke tests before publishing changes:
+
+#code(
+    `typst compile --root . template/template.typ template/typst-sdu-os-slide.pdf
+typst compile --root . docs/manual.typ docs/manual.pdf`,
+)
+
+#pagebreak()
+= Reference <reference>
+
+#api-module(
+    "slide",
+    "../slide.typ",
+    [Public entry point. Most users import from this file only.],
+)
+
+#api-module(
     "theme",
     "../lib/theme.typ",
-    [主模板设置函数,负责把文档转换成 SDU OS slide 样式.],
+    [Main setup function and page-level theme wiring.],
 )
 
-#module-reference(
+#api-module(
     "overlays",
     "../lib/core/overlays.typ",
-    [覆盖层标记与渲染逻辑,提供 Touying 风格的增量展示能力.],
+    [Overlay markers and the renderer used by `setup`.],
 )
 
-#module-reference(
+#api-module(
     "foundation-theme",
     "../lib/foundation/theme.typ",
-    [集中存放字体、颜色和页面尺寸的设计 token.],
+    [Shared fonts, colors, and page geometry.],
 )
 
-#module-reference(
+#api-module(
     "cover",
     "../lib/components/cover.typ",
-    [封面组件,绘制 logo、标题、徽章和装饰圆.],
+    [Cover-page component.],
 )
 
-#module-reference(
+#api-module(
     "sidebar",
     "../lib/components/sidebar.typ",
-    [正文页右侧导航组件,生成可点击目录并高亮当前小节.],
+    [Right-side outline, active-row detection, and sidebar/ring layering helpers.],
 )
 
-#module-reference(
+#api-module(
     "draw",
     "../lib/utils/draw.typ",
-    [低层绘图辅助函数.],
+    [Low-level drawing helpers.],
 )
