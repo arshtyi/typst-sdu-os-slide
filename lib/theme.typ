@@ -1,9 +1,26 @@
 #import "@preview/numbly:0.1.0": *
 #import "components/cover.typ": render-cover
-#import "components/sidebar.typ": render-sidebar
+#import "components/sidebar.typ": render-sidebar, render-sidebar-gap-mask
 #import "foundation/theme.typ": theme
 #import "core/overlays.typ": render-overlays
 #import "utils/draw.typ": place-circle
+
+#let render-sidebar-circles(colors) = {
+    place-circle(
+        32.2cm + 3.56cm / 2,
+        17.7cm + 3.56cm / 2,
+        3.56cm / 2,
+        fill: colors.primary,
+        stroke: none,
+    )
+    place-circle(
+        32.2cm + 3.56cm / 2,
+        17.7cm + 3.56cm / 2,
+        1cm,
+        fill: rgb("e6c2c4"),
+        stroke: none,
+    )
+}
 
 /// Applies the SDU OS slide theme to the document.
 ///
@@ -20,6 +37,7 @@
 /// - subtitle (str): Subtitle shown on the cover and sidebar.
 /// - date (datetime): Date shown in the sidebar.
 /// - handout (bool): Whether to render only the final overlay state of each slide.
+/// - sidebar-ring-style (int): `1` keeps the old ring layering; `2` interleaves the ring with sidebar fills, active row, and gutters.
 /// - body (content): Presentation body.
 /// -> content
 #let setup(
@@ -29,10 +47,20 @@
     subtitle: "Slide for SDU OS",
     date: datetime.today(),
     handout: false,
+    sidebar-ring-style: 1,
     body,
 ) = {
     let colors = theme.colors
     let page-config = theme.page
+    let sidebar-x = 27.12cm
+    let sidebar-y = 1.88cm
+    let sidebar-width = page-config.sidebar-width - 0.35pt
+    let sidebar-height = page-config.sidebar-height - 0.6pt
+    let place-sidebar(body) = place(
+        dx: sidebar-x,
+        dy: sidebar-y,
+        block(width: sidebar-width, height: sidebar-height, body),
+    )
     set page(
         width: page-config.width,
         height: page-config.height,
@@ -70,29 +98,17 @@
                 dy: 0.1cm,
                 image("../assets/sdu.png", width: 6.02cm, height: 1.59cm),
             )
-            place(
-                dx: 27.12cm,
-                dy: 1.88cm,
-                block(
-                    width: page-config.sidebar-width - 0.35pt,
-                    height: page-config.sidebar-height - 0.6pt,
-                    render-sidebar(subtitle, author, date),
-                ),
-            )
-            place-circle(
-                32.2cm + 3.56cm / 2,
-                17.7cm + 3.56cm / 2,
-                3.56cm / 2,
-                fill: colors.primary,
-                stroke: none,
-            )
-            place-circle(
-                32.2cm + 3.56cm / 2,
-                17.7cm + 3.56cm / 2,
-                1cm,
-                fill: rgb("e6c2c4"),
-                stroke: none,
-            )
+            if sidebar-ring-style == 2 {
+                place-sidebar(render-sidebar(subtitle, author, date, fill-mode: "base", show-text: false))
+                render-sidebar-circles(colors)
+                place-sidebar({
+                    render-sidebar(subtitle, author, date, fill-mode: "active")
+                    render-sidebar-gap-mask(sidebar-width, sidebar-height)
+                })
+            } else {
+                place-sidebar(render-sidebar(subtitle, author, date))
+                render-sidebar-circles(colors)
+            }
             place(
                 dx: 0.07cm,
                 dy: 0.1cm,
