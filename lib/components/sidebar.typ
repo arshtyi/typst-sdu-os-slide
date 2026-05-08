@@ -111,6 +111,9 @@
 /// `"active"` only draws the active row fill. This lets the theme interleave
 /// the decorative ring between normal row fills and the active row.
 ///
+/// `setup()` calls this internally. It is documented because the sidebar is the
+/// most template-specific component and is useful when customizing the theme.
+///
 /// - title (str): Sidebar title, usually the presentation subtitle.
 /// - author (str): Author name shown in the footer.
 /// - date (datetime): Date shown in the footer.

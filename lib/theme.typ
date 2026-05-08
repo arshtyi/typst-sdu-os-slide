@@ -31,13 +31,33 @@
 /// Headings always start a new page. Level 3 and deeper headings are rendered
 /// as centered in-slide titles.
 ///
+/// ```typ
+/// #import "slide.typ": setup, pause
+///
+/// #show: setup.with(
+///   title: "Operating Systems",
+///   subtitle: "Scheduling",
+///   author: "arshtyi",
+///   term: "2026 Spring",
+/// )
+///
+/// = CPU Scheduling
+/// == Round Robin
+///
+/// The ready queue is served by time slices.
+///
+/// #pause
+///
+/// A smaller quantum improves response time but raises switching overhead.
+/// ```
+///
 /// - author (str): Author name shown on the cover and sidebar.
 /// - term (str): Course term shown on the cover.
 /// - title (str): Presentation title shown on the cover.
 /// - subtitle (str): Subtitle shown on the cover and sidebar.
 /// - date (datetime): Date shown in the sidebar.
 /// - handout (bool): Whether to render only the final overlay state of each slide.
-/// - sidebar-ring-style (int): `1` keeps the old ring layering; `2` interleaves the ring with sidebar fills, active row, and gutters.
+/// - sidebar-ring-style (int): `1` draws the decorative ring above the sidebar; `2` interleaves the ring with sidebar fills, active row, and gutters.
 /// - body (content): Presentation body.
 /// -> content
 #let setup(

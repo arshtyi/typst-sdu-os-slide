@@ -9,6 +9,14 @@
 /// amount. With `relative: false`, `n` sets the current overlay step
 /// absolutely.
 ///
+/// ```typ
+/// Always visible.
+///
+/// #jump(2)
+///
+/// Hidden on overlay 1, visible from overlay 2.
+/// ```
+///
 /// - n (int): Relative or absolute overlay step.
 /// - relative (bool): Whether `n` is a relative offset. Defaults to `false`.
 /// -> content
@@ -36,6 +44,14 @@
 /// Content after `pause` is hidden on the current overlay and appears on the
 /// next overlay. It is equivalent to `jump(1, relative: true)`.
 ///
+/// ```typ
+/// First point.
+///
+/// #pause
+///
+/// Second point.
+/// ```
+///
 /// -> content
 #let pause = jump(1, relative: true)
 
@@ -44,6 +60,18 @@
 /// Content after `meanwhile` appears together with the beginning of the slide,
 /// while earlier paused content keeps its own reveal timing. It is equivalent
 /// to `jump(1)`.
+///
+/// ```typ
+/// Left story.
+///
+/// #pause
+///
+/// Left story, step 2.
+///
+/// #meanwhile
+///
+/// Right story starts on overlay 1.
+/// ```
 ///
 /// -> content
 #let meanwhile = jump(1)
@@ -170,6 +198,9 @@
 /// duplicated once for each overlay step introduced by `pause`, `meanwhile`, or
 /// `jump`. In handout mode, only the final overlay state of each slide is
 /// rendered.
+///
+/// This is normally called by `setup()`; user documents usually call the
+/// overlay markers instead.
 ///
 /// - handout (bool): Whether to render only final overlay states. Defaults to `false`.
 /// - body (content): Document body to render.

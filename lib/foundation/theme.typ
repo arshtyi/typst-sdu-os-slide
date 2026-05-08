@@ -3,6 +3,13 @@
 /// The dictionary contains font families, colors, and page dimensions used by
 /// the cover, sidebar, frame, and body text.
 ///
+/// ```typ
+/// #import "slide.typ": theme
+///
+/// #text(fill: theme.colors.primary)[Important]
+/// #rect(width: theme.page.sidebar-width, height: 1cm)
+/// ```
+///
 /// -> dictionary
 #let theme = (
     fonts: (
