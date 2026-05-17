@@ -47,6 +47,16 @@ git clone https://github.com/arshtyi/typst-sdu-os-slide.git
 - 支持类似 Touying 的 `#pause` 与 `#meanwhile` 覆盖层语义和 `handout: true` 生成只包含最终 overlay 状态的阅读版.
 - 基于typst特性,`sidebar`组件额外实现了跳转.
 
+## typ2pptx
+
+[typ2pptx](https://github.com/touying-typ/typ2pptx), just a try.
+
+```sh
+uvx typ2pptx --root . -v template/template.typ -o template/typ2pptx.pptx
+```
+
+这个效果目前很差,不建议使用.
+
 ## Acknowledgments
 
 - [touying](https://github.com/touying-typ/touying)
