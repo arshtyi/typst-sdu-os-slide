@@ -61,6 +61,3 @@ uvx typ2pptx --root . -v template/template.typ -o template/typ2pptx.pptx
 
 - [touying](https://github.com/touying-typ/touying)
 - [typst-talk](https://github.com/OrangeX4/typst-talk)
-- 主要使用的字体:
-  - [LxgwWenkai](https://github.com/lxgw/LxgwWenkai)
-  - [source-han-sans](https://github.com/adobe-fonts/source-han-sans)

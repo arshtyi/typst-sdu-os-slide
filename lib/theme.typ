@@ -5,12 +5,12 @@
 #import "core/overlays.typ": render-overlays
 #import "utils/draw.typ": place-circle
 
-#let render-sidebar-circles(colors) = {
+#let render-sidebar-circles() = {
     place-circle(
         32.2cm + 3.56cm / 2,
         17.7cm + 3.56cm / 2,
         3.56cm / 2,
-        fill: colors.primary,
+        fill: theme.colors.primary,
         stroke: none,
     )
     place-circle(
@@ -70,6 +70,7 @@
     sidebar-ring-style: 1,
     body,
 ) = {
+    set document(title: title, author: author, date: date, description: subtitle)
     let colors = theme.colors
     let page-config = theme.page
     let sidebar-x = 27.12cm
@@ -120,14 +121,14 @@
             )
             if sidebar-ring-style == 2 {
                 place-sidebar(render-sidebar(subtitle, author, date, fill-mode: "base", show-text: false))
-                render-sidebar-circles(colors)
+                render-sidebar-circles()
                 place-sidebar({
                     render-sidebar(subtitle, author, date, fill-mode: "active")
                     render-sidebar-gap-mask(sidebar-width, sidebar-height)
                 })
             } else {
                 place-sidebar(render-sidebar(subtitle, author, date))
-                render-sidebar-circles(colors)
+                render-sidebar-circles()
             }
             place(
                 dx: 0.07cm,
@@ -141,10 +142,10 @@
             )
         },
     )
-    set text(size: 20pt, font: (theme.fonts.content.cjk, theme.fonts.content.latin), weight: "medium")
+    set text(size: 20pt, font: theme.fonts.content, weight: "medium")
     set par(justify: true)
     set underline(stroke: 0.05em, offset: 0.25em)
-    show raw: set text(font: ("IBM Plex Mono", "Source Han Sans SC", "Noto Sans CJK SC"))
+    show raw: set text(font: theme.fonts.raw)
     show raw.where(block: false): box.with(
         fill: luma(240),
         inset: (x: 0.3em, y: 0em),

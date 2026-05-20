@@ -14,11 +14,9 @@
 #let theme = (
     fonts: (
         cover: "LXGW WenKai",
-        outline: "Source Han Sans SC",
-        content: (
-            cjk: "LXGW WenKai",
-            latin: (name: "Calibri", covers: "latin-in-cjk"),
-        ),
+        outline: "Noto Sans CJK SC",
+        content: ("LXGW WenKai", (name: "Libertinus Serif", covers: "latin-in-cjk")),
+        raw: ("IBM Plex Mono", "Noto Sans CJK SC"),
     ),
     colors: (
         primary: rgb("9c0b15"),
